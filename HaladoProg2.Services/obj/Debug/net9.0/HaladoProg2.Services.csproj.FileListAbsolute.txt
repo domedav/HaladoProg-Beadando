@@ -1,0 +1,17 @@
+E:\!!School\HaladoProg\HaladoProg2.Services\bin\Debug\net9.0\HaladoProg2.Services.deps.json
+E:\!!School\HaladoProg\HaladoProg2.Services\bin\Debug\net9.0\HaladoProg2.Services.runtimeconfig.json
+E:\!!School\HaladoProg\HaladoProg2.Services\bin\Debug\net9.0\HaladoProg2.Services.dll
+E:\!!School\HaladoProg\HaladoProg2.Services\bin\Debug\net9.0\HaladoProg2.Services.pdb
+E:\!!School\HaladoProg\HaladoProg2.Services\bin\Debug\net9.0\HaladoProg2.DataContext.dll
+E:\!!School\HaladoProg\HaladoProg2.Services\bin\Debug\net9.0\HaladoProg2.DataContext.pdb
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\HaladoProg2.Services.csproj.AssemblyReference.cache
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\HaladoProg2.Services.GeneratedMSBuildEditorConfig.editorconfig
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\HaladoProg2.Services.AssemblyInfoInputs.cache
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\HaladoProg2.Services.AssemblyInfo.cs
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\HaladoProg2.Services.csproj.CoreCompileInputs.cache
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\HaladoPr.1520F2F0.Up2Date
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\HaladoProg2.Services.dll
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\refint\HaladoProg2.Services.dll
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\HaladoProg2.Services.pdb
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\HaladoProg2.Services.genruntimeconfig.cache
+E:\!!School\HaladoProg\HaladoProg2.Services\obj\Debug\net9.0\ref\HaladoProg2.Services.dll

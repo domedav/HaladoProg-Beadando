@@ -1,0 +1,14 @@
+E:\!!School\HaladoProg\HaladoProg2.DataContext\bin\Debug\net9.0\HaladoProg2.DataContext.deps.json
+E:\!!School\HaladoProg\HaladoProg2.DataContext\bin\Debug\net9.0\HaladoProg2.DataContext.runtimeconfig.json
+E:\!!School\HaladoProg\HaladoProg2.DataContext\bin\Debug\net9.0\HaladoProg2.DataContext.dll
+E:\!!School\HaladoProg\HaladoProg2.DataContext\bin\Debug\net9.0\HaladoProg2.DataContext.pdb
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.csproj.AssemblyReference.cache
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.GeneratedMSBuildEditorConfig.editorconfig
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.AssemblyInfoInputs.cache
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.AssemblyInfo.cs
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.csproj.CoreCompileInputs.cache
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.dll
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\refint\HaladoProg2.DataContext.dll
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.pdb
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.genruntimeconfig.cache
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\ref\HaladoProg2.DataContext.dll

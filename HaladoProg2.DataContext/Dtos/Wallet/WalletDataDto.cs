@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using HaladoProg2.DataContext.Dtos.Crypto;
+
+namespace HaladoProg2.DataContext.Dtos.Wallet
+{
+	public class WalletDataDto
+	{
+		public int Id { get; set; }
+		public double CryptoCount { get; set; }
+		public List<CryptoDataDto> CryptoData { get; set; }
+	}
+}
