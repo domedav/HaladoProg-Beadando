@@ -169,3 +169,4 @@ E:\!!School\HaladoProg\HaladoProg2\obj\Debug\net9.0\refint\HaladoProg2.dll
 E:\!!School\HaladoProg\HaladoProg2\obj\Debug\net9.0\HaladoProg2.pdb
 E:\!!School\HaladoProg\HaladoProg2\obj\Debug\net9.0\HaladoProg2.genruntimeconfig.cache
 E:\!!School\HaladoProg\HaladoProg2\obj\Debug\net9.0\ref\HaladoProg2.dll
+E:\!!School\HaladoProg\HaladoProg2\obj\Debug\net9.0\HaladoProg2.sourcelink.json

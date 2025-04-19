@@ -23,7 +23,7 @@ namespace HaladoProg2.Services
 
 		public async Task<bool> CreateAsync(int userId, int cryptoId, double cryptoCount)
 		{
-			if (cryptoCount <= 0)
+			if (cryptoCount < 0)
 				return false; // cant create negative crypto
 
 			_dbContext.Wallets.Add(new Wallet

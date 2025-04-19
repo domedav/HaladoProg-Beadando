@@ -12,6 +12,6 @@ namespace HaladoProg2.DataContext.Dtos.Wallet
 	{
 		public int Id { get; set; }
 		public double CryptoCount { get; set; }
-		public List<CryptoDataDto> CryptoData { get; set; }
+		public CryptoDataDto CryptoData { get; set; }
 	}
 }

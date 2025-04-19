@@ -13,16 +13,39 @@ namespace HaladoProg2.DataContext.Context
 {
 	public class AppDbContext : DbContext
 	{
+		public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+		{
+		}
+
 		public DbSet<User> Users { get; set; }
 		public DbSet<Wallet> Wallets { get; set; }
 		public DbSet<Crypto> CryptoCurrencies { get; set; }
 		public DbSet<Transaction> Transactions { get; set; }
 		public DbSet<PriceHistory> PriceHistories { get; set; }
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		public void SeedData()
 		{
-			var connectionString = "Server=(local);Database=CryptoDb_JBPWXQ;Trusted_Connection=True;TrustServerCertificate=True;";
-			optionsBuilder.UseSqlServer(connectionString);
+			if (!CryptoCurrencies.Any()) // we have 15 pre defined crypto
+			{
+				CryptoCurrencies.AddRange(
+					new Crypto { Name = "Bitcoin (BTC)", AvailableQuantity = 100, CurrentPrice = 30323608 },
+					new Crypto { Name = "Ethereum (ETH)", AvailableQuantity = 100, CurrentPrice = 570616 },
+					new Crypto { Name = "Tether (USDT)", AvailableQuantity = 50, CurrentPrice = 359 },
+					new Crypto { Name = "XRP (XRP)", AvailableQuantity = 50, CurrentPrice = 740 },
+					new Crypto { Name = "Solana (SOL)", AvailableQuantity = 50, CurrentPrice = 48039 },
+					new Crypto { Name = "USD Coin (USDC)", AvailableQuantity = 50, CurrentPrice = 359 },
+					new Crypto { Name = "Dogecoin (DOGE)", AvailableQuantity = 50, CurrentPrice = 56.55 },
+					new Crypto { Name = "TRON (TRX)", AvailableQuantity = 50, CurrentPrice = 90.15 },
+					new Crypto { Name = "Cardano (ADA)", AvailableQuantity = 50, CurrentPrice = 225.40 },
+					new Crypto { Name = "Wrapped Bitcoin (WBTC)", AvailableQuantity = 50, CurrentPrice = 23148253 },
+					new Crypto { Name = "Avalanche (AVAX)", AvailableQuantity = 20, CurrentPrice = 6907 },
+					new Crypto { Name = "Chainlink (LINK)", AvailableQuantity = 20, CurrentPrice = 4320 },
+					new Crypto { Name = "Stellar (XLM)", AvailableQuantity = 20, CurrentPrice = 86.24 },
+					new Crypto { Name = "Toncoin (TON)", AvailableQuantity = 20, CurrentPrice = 2059 },
+					new Crypto { Name = "Shiba Inu (SHIB)", AvailableQuantity = 20, CurrentPrice = 0.0043 }
+				);
+				SaveChanges();
+			}
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

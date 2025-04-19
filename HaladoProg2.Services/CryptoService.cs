@@ -31,8 +31,8 @@ namespace HaladoProg2.Services
 		public async Task<bool> CreateAsync(string name, double availableQuantity, double currentPrice)
 		{
 			if (name.Trim() == string.Empty ||
-				availableQuantity <= 0 ||
-				currentPrice <= 0) // invalid data
+				availableQuantity < 0 ||
+				currentPrice < 0) // invalid data
 				return false;
 
 			_dbContext.CryptoCurrencies.Add(new Crypto

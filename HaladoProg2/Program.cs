@@ -16,12 +16,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy("AllowLocalhost",
+	options.AddPolicy("AllowAll",
 		policy =>
 		{
-			policy.WithOrigins("http://localhost:3000")
-				  .AllowAnyMethod()
-				  .AllowAnyHeader();
+			policy.AllowAnyOrigin()
+				   .AllowAnyMethod()
+				   .AllowAnyHeader();
 		});
 });
 
@@ -46,12 +46,21 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HaladóProgAPI v1"));
 }
-app.UseCors("AllowLocalhost");
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+	var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+	dbContext.Database.EnsureCreated();
+
+	dbContext.SeedData();
+}
 
 app.Run();

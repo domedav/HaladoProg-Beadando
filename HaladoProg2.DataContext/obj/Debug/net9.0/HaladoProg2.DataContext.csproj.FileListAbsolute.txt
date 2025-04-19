@@ -12,3 +12,4 @@ E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\refint\HaladoPro
 E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.pdb
 E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.genruntimeconfig.cache
 E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\ref\HaladoProg2.DataContext.dll
+E:\!!School\HaladoProg\HaladoProg2.DataContext\obj\Debug\net9.0\HaladoProg2.DataContext.sourcelink.json
