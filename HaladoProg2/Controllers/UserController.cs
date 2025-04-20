@@ -22,6 +22,11 @@ namespace HaladoProg2.Controllers
 		[HttpPost("register")]
 		public async Task<IActionResult> RegisterUser([FromBody] UserRegisterDto userRegisterDto)
 		{
+			if (userRegisterDto.Username.Trim() == string.Empty ||
+				userRegisterDto.Email.Trim() == string.Empty ||
+				userRegisterDto.Password.Trim() == string.Empty)
+				return BadRequest("Egy vagy több adat nem lett kitöltve!");
+
 			var result = await _userService.CreateAsync(userRegisterDto.Username, userRegisterDto.Email, userRegisterDto.Password);
 
 			if (!result)
@@ -36,7 +41,7 @@ namespace HaladoProg2.Controllers
 			var user = await _userService.GetAsync(userId);
 
 			if (user == null)
-				return BadRequest("Ez a felhasználó nem létezik!");
+				return NotFound("Ez a felhasználó nem létezik!");
 
 			var userDto = new UserDataDto // create a dto from the user data
 			{
@@ -69,6 +74,11 @@ namespace HaladoProg2.Controllers
 		[HttpPut("{userId}")]
 		public async Task<IActionResult> UpdateUser(int userId, [FromBody] UserUpdateDto userUpdateDto)
 		{
+			if (userUpdateDto.Username.Trim() == string.Empty ||
+				userUpdateDto.Email.Trim() == string.Empty ||
+				userUpdateDto.Password.Trim() == string.Empty)
+				return BadRequest("Egy vagy több adat nem lett kitöltve!");
+
 			var result = await _userService.UpdateAsync(userId, userUpdateDto.Username, userUpdateDto.Email, userUpdateDto.Password);
 			if (!result)
 				return BadRequest("Nem sikerült a felhasználói adatokat módosítani!");

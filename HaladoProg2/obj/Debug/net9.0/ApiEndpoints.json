@@ -1,5 +1,95 @@
 [
   {
+    "ContainingType": "HaladoProg2.Controllers.CryptoController",
+    "Method": "GetAllCrypto",
+    "RelativePath": "api/cryptos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.CryptoController",
+    "Method": "CreateCrypto",
+    "RelativePath": "api/cryptos",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cryptoCreateDto",
+        "Type": "HaladoProg2.DataContext.Dtos.Crypto.CryptoCreateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.CryptoController",
+    "Method": "GetCrypto",
+    "RelativePath": "api/cryptos/{cryptoId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cryptoId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.CryptoController",
+    "Method": "CreateCrypto",
+    "RelativePath": "api/cryptos/{cryptoId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cryptoId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.TransactionController",
+    "Method": "GetTransactions",
+    "RelativePath": "api/transactions/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.TransactionController",
+    "Method": "GetTransaction",
+    "RelativePath": "api/transactions/details/{transactionId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "transactionId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "HaladoProg2.Controllers.UserController",
     "Method": "GetUser",
     "RelativePath": "api/users/{userId}",
@@ -63,6 +153,64 @@
       {
         "Name": "userRegisterDto",
         "Type": "HaladoProg2.DataContext.Dtos.User.UserRegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.WalletController",
+    "Method": "GetWallet",
+    "RelativePath": "api/wallet/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.WalletController",
+    "Method": "UpdateWallet",
+    "RelativePath": "api/wallet/{userId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "walletUpdateDto",
+        "Type": "HaladoProg2.DataContext.Dtos.Wallet.WalletUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.WalletController",
+    "Method": "UpdateWallet",
+    "RelativePath": "api/wallet/{userId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "walletDeleteDto",
+        "Type": "HaladoProg2.DataContext.Dtos.Wallet.WalletDeleteDto",
         "IsRequired": true
       }
     ],

@@ -13,7 +13,7 @@ namespace HaladoProg2.Services
 {
 	public interface ITransactionService
 	{
-		Task<bool> CreateAsync(int userId, int cryptoId, double transactionQuantity, double transactionPrice);
+		Task<bool> CreateAsync(int userId, int cryptoId, double transactionQuantity, double transactionPrice, DateTime transactionTime, bool selling);
 		Task<Transaction?> GetAsync(int transactionId);
 	}
 
@@ -25,7 +25,7 @@ namespace HaladoProg2.Services
 			_dbContext = dbContext;
 		}
 
-		public async Task<bool> CreateAsync(int userId, int cryptoId, double transactionQuantity, double transactionPrice)
+		public async Task<bool> CreateAsync(int userId, int cryptoId, double transactionQuantity, double transactionPrice, DateTime transactionTime, bool selling)
 		{
 			if (transactionQuantity < 0 || transactionPrice < 0)
 				return false; // cant be negative
@@ -35,7 +35,9 @@ namespace HaladoProg2.Services
 				UserId = userId,
 				CryptoId = cryptoId,
 				TransactionPrice = transactionPrice,
-				TransactionQuantity = transactionQuantity
+				TransactionQuantity = transactionQuantity,
+				TransactionTime = transactionTime,
+				Selling = selling
 			});
 			await _dbContext.SaveChangesAsync();
 			return true;

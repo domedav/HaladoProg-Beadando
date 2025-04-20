@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HaladoProg2.DataContext")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fa06d0ed1440c5837af51727a2a24b5d78a62557")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+177e767c79e61eb910befe1a24c39720599d0baa")]
 [assembly: System.Reflection.AssemblyProductAttribute("HaladoProg2.DataContext")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HaladoProg2.DataContext")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

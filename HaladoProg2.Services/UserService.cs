@@ -18,6 +18,8 @@ namespace HaladoProg2.Services
 		Task<User?> GetAsync(int userId);
 		Task<bool> UpdateAsync(int userId, string username, string email, string password);
 		Task<bool> DeleteAsync(int userId);
+		Task<bool> SetMoney(int userId, double money);
+		Task<bool> ModifyMoney(int userId, double money);
 	}
 
 	public class UserService : IUserService
@@ -38,7 +40,7 @@ namespace HaladoProg2.Services
 				return false;
 
 			_dbContext.Users.Add(
-				new DataContext.Entities.User
+				new User
 				{
 					Username = username,
 					Email = email,
@@ -66,6 +68,28 @@ namespace HaladoProg2.Services
 		{
 			var user = await _dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
 			return user;
+		}
+
+		public async Task<bool> SetMoney(int userId, double money)
+		{
+			var user = await _dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+			if (user == null)
+				return false;
+
+			user.UserMoney = money;
+			await _dbContext.SaveChangesAsync();
+			return true;
+		}
+
+		public async Task<bool> ModifyMoney(int userId, double money)
+		{
+			var user = await _dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+			if (user == null)
+				return false;
+
+			user.UserMoney += money;
+			await _dbContext.SaveChangesAsync();
+			return true;
 		}
 
 		public async Task<bool> UpdateAsync(int userId, string username, string email, string password)

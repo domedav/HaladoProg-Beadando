@@ -67,7 +67,7 @@ namespace HaladoProg2.Services
 
 		public async Task<Crypto?> GetAsync(int crpytoId)
 		{
-			var crypto = await _dbContext.CryptoCurrencies.Where(c => c.Id == crpytoId).FirstAsync();
+			var crypto = await _dbContext.CryptoCurrencies.Where(c => c.Id == crpytoId).FirstOrDefaultAsync();
 			return crypto;
 		}
 

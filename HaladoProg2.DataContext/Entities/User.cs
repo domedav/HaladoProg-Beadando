@@ -14,5 +14,6 @@ namespace HaladoProg2.DataContext.Entities
 		public string Password { get; set; }
 		public List<Wallet> Wallets { get; set; }
 		public List<Transaction> Transactions { get; set; }
+		public double UserMoney { get; set; }
 	}
 }

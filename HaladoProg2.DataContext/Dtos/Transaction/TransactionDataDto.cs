@@ -9,8 +9,11 @@ namespace HaladoProg2.DataContext.Dtos.Transaction
 	public class TransactionDataDto
 	{
 		public int Id { get; set; }
-		public int CryptoId { get; set; }
-		public double TransactionQuantity { get; set; }
-		public double TransactionPrice { get; set; }
+		public int? CryptoId { get; set; }
+		public double? TransactionQuantity { get; set; }
+		public double? TransactionPrice { get; set; }
+		public double? TransactionSpentMoney { get; set; }
+		public DateTime TransactionTime { get; set; }
+		public bool Selling { get; set; }
 	}
 }
