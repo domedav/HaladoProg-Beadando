@@ -37,7 +37,7 @@ namespace HaladoProg2.Services
 				TransactionPrice = transactionPrice,
 				TransactionQuantity = transactionQuantity,
 				TransactionTime = transactionTime,
-				Selling = selling
+				IsSelling = selling
 			});
 			await _dbContext.SaveChangesAsync();
 			return true;

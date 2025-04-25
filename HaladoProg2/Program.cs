@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using HaladoProg2.DataContext.Context;
 using HaladoProg2.Services;
+using HaladoProg2.Services.Background;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,10 +32,12 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IPriceHistoryService, PriceHistoryService>();
 builder.Services.AddScoped<ICryptoService, CryptoService>();
 
+builder.Services.AddHostedService<CryptoPricingUpdaterBackgroundService>(); // background service
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-	c.SwaggerDoc("v1", new OpenApiInfo { Title = "HaladóProgAPI", Version = "v1" });
+	c.SwaggerDoc("v1", new OpenApiInfo { Title = "Haladï¿½ProgAPI", Version = "v1" });
 });
 
 var app = builder.Build();
@@ -44,7 +47,7 @@ if (app.Environment.IsDevelopment())
 {
 	app.MapOpenApi();
 	app.UseSwagger();
-	app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HaladóProgAPI v1"));
+	app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Haladï¿½ProgAPI v1"));
 }
 app.UseCors("AllowAll");
 

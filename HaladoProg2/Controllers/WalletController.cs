@@ -25,7 +25,7 @@ namespace HaladoProg2.Controllers
 			if (user == null)
 				return NotFound("A kért felhasználó nem létezik!");
 
-			if (user.Wallets == null)
+			if (user.Wallets.Count <= 0)
 				return NotFound("A felhasználónak nincs létező kriptó tárcája!");
 
 			var convert = user.Wallets

@@ -15,6 +15,7 @@ namespace HaladoProg2.Services
 	{
 		Task<List<Crypto>> GetAllAsync();
 		Task<Crypto?> GetAsync(int crpytoId);
+		Task<Crypto?> GetIncludesAsync(int crpytoId);
 		Task<bool> CreateAsync(string name, double availableQuantity, double currentPrice);
 		Task<bool> UpdateAsync(int crpytoId, string name, double availableQuantity, double currentPrice);
 		Task<bool> DeleteAsync(int crpytoId);
@@ -68,6 +69,16 @@ namespace HaladoProg2.Services
 		public async Task<Crypto?> GetAsync(int crpytoId)
 		{
 			var crypto = await _dbContext.CryptoCurrencies.Where(c => c.Id == crpytoId).FirstOrDefaultAsync();
+			return crypto;
+		}
+		
+		public async Task<Crypto?> GetIncludesAsync(int crpytoId)
+		{
+			var crypto = await _dbContext.CryptoCurrencies
+				.Include(c => c.PriceHistories)
+				.Include(c => c.Transactions)
+				.Include(c => c.ContainingWallets)
+				.Where(c => c.Id == crpytoId).FirstOrDefaultAsync();
 			return crypto;
 		}
 

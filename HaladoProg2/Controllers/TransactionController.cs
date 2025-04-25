@@ -53,7 +53,7 @@ namespace HaladoProg2.Controllers
 				TransactionQuantity = transaction.TransactionQuantity,
 				TransactionSpentMoney = transaction.TransactionPrice * transaction.TransactionQuantity,
 				TransactionTime = transaction.TransactionTime,
-				Selling = transaction.Selling,
+				Selling = transaction.IsSelling,
 			};
 			return Ok(result);
 		}

@@ -16,6 +16,7 @@ namespace HaladoProg2.Services
 	{
 		Task<bool> CreateAsync(string username, string email, string password);
 		Task<User?> GetAsync(int userId);
+		Task<User?> GetIncludesAsync(int userId);
 		Task<bool> UpdateAsync(int userId, string username, string email, string password);
 		Task<bool> DeleteAsync(int userId);
 		Task<bool> SetMoney(int userId, double money);
@@ -67,6 +68,15 @@ namespace HaladoProg2.Services
 		public async Task<User?> GetAsync(int userId)
 		{
 			var user = await _dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+			return user;
+		}
+		
+		public async Task<User?> GetIncludesAsync(int userId)
+		{
+			var user = await _dbContext.Users
+				.Include(u => u.Wallets)
+				.Include(u => u.Transactions)
+				.Where(u => u.Id == userId).FirstOrDefaultAsync();
 			return user;
 		}
 
