@@ -46,7 +46,8 @@ namespace HaladoProg2.Controllers
 				BuyTransactionsCount = buyTransCount,
 				SellTransactionsCount = sellTransCount,
 				TotalNetWorth = totalWorth,
-				PortfolioWallets = walletCount <= 0 ? new List<PortfolioWalletDto>() : userWallets.ConvertAll(w => ConvertWalletToDto(w).Result),
+				PortfolioWallets = walletCount <= 0 ? new List<PortfolioWalletDto>() :
+								userWallets.Where(w => w.CryptoCount > 0).ToList().ConvertAll(w => ConvertWalletToDto(w).Result),
 				PortfolioTransactionsBuy = buyTransCount <= 0 ? new List<PortfolioTransactionsDto>() : userBuyTransactions.ConvertAll(ConvertTransactionToDto),
 				PortfolioTransactionsSell = sellTransCount <= 0 ? new List<PortfolioTransactionsDto>() : userSellTransactions.ConvertAll(ConvertTransactionToDto)
 			};

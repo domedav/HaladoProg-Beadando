@@ -1,5 +1,37 @@
 [
   {
+    "ContainingType": "HaladoProg2.Controllers.CryptoPricingController",
+    "Method": "UpdateSetCrypto",
+    "RelativePath": "api/crypto/price",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cryptoUpdateDto",
+        "Type": "HaladoProg2.DataContext.Dtos.Crypto.CryptoUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.CryptoPricingController",
+    "Method": "GetPriceHistory",
+    "RelativePath": "api/crypto/price/history/{cryptoId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cryptoId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "HaladoProg2.Controllers.CryptoController",
     "Method": "GetAllCrypto",
     "RelativePath": "api/cryptos",
@@ -52,6 +84,86 @@
       {
         "Name": "cryptoId",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.PortfolioController",
+    "Method": "GetPortfolio",
+    "RelativePath": "api/portfolio/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.ProfitsController",
+    "Method": "GetUserProfitability",
+    "RelativePath": "api/profit/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.ProfitsController",
+    "Method": "GetUserProfitabilityDetailed",
+    "RelativePath": "api/profit/details/{userId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.TradeController",
+    "Method": "BuyCrypto",
+    "RelativePath": "api/trade/buy",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tradeBuyDto",
+        "Type": "HaladoProg2.DataContext.Dtos.Trade.TradeBuyDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "HaladoProg2.Controllers.TradeController",
+    "Method": "SellCrypto",
+    "RelativePath": "api/trade/sell",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tradeSellDto",
+        "Type": "HaladoProg2.DataContext.Dtos.Trade.TradeSellDto",
         "IsRequired": true
       }
     ],

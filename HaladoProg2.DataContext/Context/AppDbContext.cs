@@ -75,6 +75,10 @@ namespace HaladoProg2.DataContext.Context
 			modelBuilder.Entity<Crypto>()
 				.HasKey(c => c.Id);
 
+			modelBuilder.Entity<Crypto>()
+				.Property(c => c.CurrentPrice)
+				.HasColumnType("float"); // maps to float
+
 			modelBuilder.Entity<Transaction>()
 				.HasKey(t => t.Id);
 

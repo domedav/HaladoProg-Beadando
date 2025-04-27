@@ -32,7 +32,7 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IPriceHistoryService, PriceHistoryService>();
 builder.Services.AddScoped<ICryptoService, CryptoService>();
 
-builder.Services.AddHostedService<CryptoPricingUpdaterBackgroundService>(); // background service
+builder.Services.AddSingleton<IHostedService, CryptoPricingUpdaterBackgroundService>(); // background service
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -47,7 +47,7 @@ if (app.Environment.IsDevelopment())
 {
 	app.MapOpenApi();
 	app.UseSwagger();
-	app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Halad�ProgAPI v1"));
+	app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HaladóProgAPI v1"));
 }
 app.UseCors("AllowAll");
 

@@ -1,58 +1,85 @@
+using HaladoProg2.DataContext.Context;
+using HaladoProg2.DataContext.Entities;
+
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace HaladoProg2.Services.Background;
 
 public class CryptoPricingUpdaterBackgroundService : BackgroundService
 {
-    private readonly IPriceHistoryService _priceHistoryService;
-    private readonly ICryptoService _cryptoService;
+	private readonly IServiceProvider _serviceProvider;
 
-    public CryptoPricingUpdaterBackgroundService(IPriceHistoryService priceHistoryService, ICryptoService cryptoService)
+	public CryptoPricingUpdaterBackgroundService(IServiceProvider serviceProvider)
     {
-        _priceHistoryService = priceHistoryService;
-        _cryptoService = cryptoService;
-    }
+		_serviceProvider = serviceProvider;
+	}
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested) // while it is not cancelled, we run it
         {
-            var randomWaitInterval = 30 + (Random.Shared.NextDouble() * 30); //30 to 60 random
+            var randomWaitInterval = 30 + (Random.Shared.NextDouble() * 60); //30 to 60 random
             await Task.Delay(TimeSpan.FromSeconds(randomWaitInterval), stoppingToken); // we wait for the interval
 
-            var result = await UpdateCryptoPricing();
-            Console.WriteLine(!result ? "Crypto pricing update failed" : "Crypto pricing update complete");
-        }
+			using (var scope = _serviceProvider.CreateScope())
+			{
+				var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+				var result = await UpdateCryptoPricingAsync(dbContext);
+				Console.WriteLine(!result ? "Crypto pricing update failed" : "Crypto pricing update complete");
+			}
+		}
         Console.WriteLine("Crypto pricing update service stopped");
     }
 
-    private async Task<bool> UpdateCryptoPricing()
+	private async Task<bool> UpdateCryptoPricingAsync(AppDbContext dbContext)
     {
-        var all = await _cryptoService.GetAllAsync();
+        var all = GetAllCrypto(dbContext);
         
         if (all.Count <= 0) // nothing to update
             return false;
-        
-        all.ForEach(async c =>
-        {
-            var newPrice = Double.Lerp(
-                -(c.CurrentPrice / 2),
-                c.CurrentPrice / 2,
-                (StockMarketDrasticPriceRandom(Random.Shared.NextDouble() * 2) + 1) / 2); // the method gives a value between -1 and 1, but we can only lerp between 0 and 1
-            
-            await _cryptoService.UpdateAsync(c.Id, c.Name, c.AvailableQuantity, newPrice);
-            await _priceHistoryService.CreateAsync(c.Id, newPrice, DateTime.UtcNow);
-        });
+
+		foreach (var c in all)
+		{
+			var newPrice = SimulateNextPrice(c.CurrentPrice);
+
+			var update = UpdateCrypto(c.Id, newPrice, dbContext);
+            if (!update)
+                continue;
+			CreatePriceHistory(c.Id, newPrice, DateTime.UtcNow, dbContext);
+		}
+		await dbContext.SaveChangesAsync();
+		return true;
+    }
+
+	private double SimulateNextPrice(double currentPrice)
+	{
+		double nextPrice = Double.Lerp(currentPrice * 0.98, currentPrice * 1.02, Random.Shared.NextDouble());
+
+		// prevent collapse
+		if (nextPrice <= 0)
+			nextPrice = currentPrice;
+
+		return Math.Round(nextPrice, 5);
+	}
+
+	private List<Crypto> GetAllCrypto(AppDbContext dbContext)
+    {
+        return dbContext.CryptoCurrencies.ToList();
+    }
+
+    private bool UpdateCrypto(int cid, double newPrice, AppDbContext dbContext)
+    {
+        var crypto = dbContext.CryptoCurrencies.Where(c => c.Id == cid).FirstOrDefault();
+        if (crypto == null)
+            return false;
+
+        crypto.CurrentPrice = newPrice;
         return true;
     }
 
-    private double StockMarketDrasticPriceRandom(double x) // desmos equivalent (paste in desmos.com): f\left(x\right)=\left(\left(\frac{\left(\left|x\right|\cdot\log\left(x\right)\right)}{\exp\left(x\right)}\right)^{0.2}\right)\cdot1.56\ +\ 0.1
+    private void CreatePriceHistory(int cryptoId, double price, DateTime date, AppDbContext dbContext)
     {
-        x = double.Clamp(x, 0.001, 1.999);
-        
-        var result = Math.Abs(x) * Math.Log(x);
-        result /= Math.Exp(x);
-        result = Math.Pow(result, 0.2);
-        return double.Clamp(result * 1.56d + 0.1, -1, 1);
+        dbContext.PriceHistories.Add(new PriceHistory { CryptoId = cryptoId, CurrentPrice = price, Time = date });
     }
 }

@@ -75,6 +75,7 @@ namespace HaladoProg2.Services
 		{
 			var user = await _dbContext.Users
 				.Include(u => u.Wallets)
+					.ThenInclude(w => w.Crypto)
 				.Include(u => u.Transactions)
 				.Where(u => u.Id == userId).FirstOrDefaultAsync();
 			return user;

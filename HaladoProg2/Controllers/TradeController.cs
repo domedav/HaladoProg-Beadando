@@ -27,12 +27,15 @@ namespace HaladoProg2.Controllers
 		[HttpPost("buy")]
 		public async Task<IActionResult> BuyCrypto([FromBody] TradeBuyDto tradeBuyDto)
 		{
-			var user = await _userService.GetAsync(tradeBuyDto.UserId);
+			var user = await _userService.GetIncludesAsync(tradeBuyDto.UserId);
 			if (user == null)
 				return NotFound("Nincs ilyen felhasználó!");
 
 			if (user.UserMoney < tradeBuyDto.PriceInHuf)
 				return BadRequest("Nincs elegendő pénzed a megvásárláshoz!");
+
+			if (user.Wallets == null)
+				user.Wallets = new List<DataContext.Entities.Wallet>();
 
 			var targetWallet = user.Wallets.AsQueryable().Include(w => w.Crypto).Where(w => w.CryptoId == tradeBuyDto.CryptoId).FirstOrDefault();
 			if(targetWallet == null) // the user doesnt have a wallet, that can store the given crypto
@@ -41,7 +44,7 @@ namespace HaladoProg2.Controllers
 				var result1 = await _walletService.CreateAsync(user.Id, tradeBuyDto.CryptoId, 0);
 				if (!result1)
 					return BadRequest("Hiba történt amikor a felhasználóhoz új tárcát akartunk hozzáadni!");
-				targetWallet = user.Wallets.Last(); // the target wallet is the one we just created
+				targetWallet = user.Wallets.AsQueryable().Include(w => w.Crypto).Where(w => w.CryptoId == tradeBuyDto.CryptoId).FirstOrDefault();
 			}
 
 			var targetCrypto = targetWallet.Crypto;
@@ -99,7 +102,7 @@ namespace HaladoProg2.Controllers
 		[HttpPost("sell")]
 		public async Task<IActionResult> SellCrypto([FromBody] TradeSellDto tradeSellDto)
 		{
-			var user = await _userService.GetAsync(tradeSellDto.UserId);
+			var user = await _userService.GetIncludesAsync(tradeSellDto.UserId);
 			if (user == null)
 				return NotFound("Nincs ilyen felhasználó!");
 

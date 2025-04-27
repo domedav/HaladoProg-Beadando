@@ -23,7 +23,7 @@ namespace HaladoProg2.Controllers
 		[HttpGet("{userId}")]
 		public async Task<IActionResult> GetTransactions(int userId)
 		{
-			var user = await _userService.GetAsync(userId);
+			var user = await _userService.GetIncludesAsync(userId);
 			if (user == null)
 				return NotFound("Nincs ilyen felhasználó!");
 
@@ -33,8 +33,10 @@ namespace HaladoProg2.Controllers
 
 			var result = transactions.OrderBy(t => t.TransactionTime).ToList().ConvertAll(c => new TransactionDataDto
 			{
-				Id = userId,
+				Id = c.Id,
+				CryptoId = c.CryptoId,
 				TransactionTime = c.TransactionTime,
+				Selling = c.IsSelling
 			});
 			return Ok(result);
 		}

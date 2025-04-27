@@ -45,7 +45,7 @@ public class ProfitsController : ControllerBase
         if (user == null)
             return NotFound("Nincs ilyen felhasználó!");
 
-        var result = user.Wallets.ConvertAll(w =>
+        var result = user.Wallets.Where(w => w.CryptoCount > 0).ToList().ConvertAll(w =>
         {
             var currentPrice = Task.FromResult(async () =>
             {
