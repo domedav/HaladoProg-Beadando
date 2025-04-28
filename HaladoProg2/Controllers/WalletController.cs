@@ -19,7 +19,7 @@ namespace HaladoProg2.Controllers
 		}
 
 		[HttpGet("{userId}")]
-		public async Task<IActionResult> GetWallet(int userId)
+		public async Task<IActionResult> GetWalletAsync(int userId)
 		{
 			var user = await _userService.GetAsync(userId);
 			if (user == null)
@@ -28,27 +28,25 @@ namespace HaladoProg2.Controllers
 			if (user.Wallets.Count <= 0)
 				return NotFound("A felhasználónak nincs létező kriptó tárcája!");
 
-			var convert = user.Wallets
-				.AsQueryable()
-				.Include(w => w.Crypto) // we need the object resolved here
-				.ToList()
-				.ConvertAll(c => new WalletGetDto
+			var result = new WalletGetDto
 			{
 				TotalMoneyHuf = user.Wallets.Sum(w => w.CryptoCount * w.Crypto.CurrentPrice),
 				TotalCryptoTypesCount = user.Wallets.Count,
-				Wallets = user.Wallets.ConvertAll(c => new WalletGetSubDto
-					{
-						Id = c.Id,
-						CryptoId = c.CryptoId,
-						CryptoCount = c.CryptoCount,
-						Value = c.Crypto.CurrentPrice * c.CryptoCount,
-					})
-				});
-			return Ok(convert);
+				Wallets = user.Wallets.AsQueryable()
+					.Include(w => w.Crypto) // we need the object resolved here
+					.ToList().ConvertAll(c => new WalletGetSubDto
+				{
+					Id = c.Id,
+					CryptoId = c.CryptoId,
+					CryptoCount = c.CryptoCount,
+					Value = c.Crypto.CurrentPrice * c.CryptoCount,
+				})
+			};
+			return Ok(result);
 		}
 
 		[HttpPut("{userId}")]
-		public async Task<IActionResult> UpdateWallet(int userId, [FromBody] WalletUpdateDto walletUpdateDto)
+		public async Task<IActionResult> UpdateWalletAsync(int userId, [FromBody] WalletUpdateDto walletUpdateDto)
 		{
 			var user = await _userService.GetAsync(userId);
 			if (user == null)
@@ -65,7 +63,7 @@ namespace HaladoProg2.Controllers
 
 		[HttpDelete("{userId}")]
 
-		public async Task<IActionResult> UpdateWallet(int userId, [FromBody] WalletDeleteDto walletDeleteDto)
+		public async Task<IActionResult> DeleteWalletAsync(int userId, [FromBody] WalletDeleteDto walletDeleteDto)
 		{
 			var user = await _userService.GetAsync(userId);
 			if (user == null)

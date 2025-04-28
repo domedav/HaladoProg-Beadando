@@ -21,7 +21,7 @@ namespace HaladoProg2.Controllers
 		}
 
 		[HttpGet("{userId}")]
-		public async Task<IActionResult> GetTransactions(int userId)
+		public async Task<IActionResult> GetTransactionsAsync(int userId)
 		{
 			var user = await _userService.GetIncludesAsync(userId);
 			if (user == null)
@@ -41,7 +41,7 @@ namespace HaladoProg2.Controllers
 			return Ok(result);
 		}
 		[HttpGet("details/{transactionId}")]
-		public async Task<IActionResult> GetTransaction(int transactionId)
+		public async Task<IActionResult> GetTransactionDetailsAsync(int transactionId)
 		{
 			var transaction = await _transactionService.GetAsync(transactionId);
 			if (transaction == null)

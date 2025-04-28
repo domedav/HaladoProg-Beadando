@@ -19,7 +19,7 @@ public class CryptoPricingController : ControllerBase
     }
     
     [HttpPut("price")]
-    public async Task<IActionResult> UpdateSetCrypto([FromBody] CryptoUpdateDto cryptoUpdateDto)
+    public async Task<IActionResult> UpdateSetCryptoAsync([FromBody] CryptoUpdateDto cryptoUpdateDto)
     {
         var result = await _cryptoService.GetAsync(cryptoUpdateDto.Id);
         
@@ -33,7 +33,7 @@ public class CryptoPricingController : ControllerBase
     }
     
     [HttpGet("price/history/{cryptoId}")]
-    public async Task<IActionResult> GetPriceHistory(int cryptoId)
+    public async Task<IActionResult> GetPriceHistoryAsync(int cryptoId)
     {
         var result = await _cryptoService.GetIncludesAsync(cryptoId);
         

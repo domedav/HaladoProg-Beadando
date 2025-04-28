@@ -25,7 +25,7 @@ namespace HaladoProg2.Controllers
 		}
 
 		[HttpPost("buy")]
-		public async Task<IActionResult> BuyCrypto([FromBody] TradeBuyDto tradeBuyDto)
+		public async Task<IActionResult> BuyCryptoAsync([FromBody] TradeBuyDto tradeBuyDto)
 		{
 			var user = await _userService.GetIncludesAsync(tradeBuyDto.UserId);
 			if (user == null)
@@ -37,14 +37,14 @@ namespace HaladoProg2.Controllers
 			if (user.Wallets == null)
 				user.Wallets = new List<DataContext.Entities.Wallet>();
 
-			var targetWallet = user.Wallets.AsQueryable().Include(w => w.Crypto).Where(w => w.CryptoId == tradeBuyDto.CryptoId).FirstOrDefault();
+			var targetWallet = user.Wallets.AsQueryable().Include(w => w.Crypto).FirstOrDefault(w => w.CryptoId == tradeBuyDto.CryptoId);
 			if(targetWallet == null) // the user doesnt have a wallet, that can store the given crypto
 			{
 				// create a new wallet for the user to store this crypto
 				var result1 = await _walletService.CreateAsync(user.Id, tradeBuyDto.CryptoId, 0);
 				if (!result1)
 					return BadRequest("Hiba történt amikor a felhasználóhoz új tárcát akartunk hozzáadni!");
-				targetWallet = user.Wallets.AsQueryable().Include(w => w.Crypto).Where(w => w.CryptoId == tradeBuyDto.CryptoId).FirstOrDefault();
+				targetWallet = user.Wallets.AsQueryable().Include(w => w.Crypto).FirstOrDefault(w => w.CryptoId == tradeBuyDto.CryptoId);
 			}
 
 			var targetCrypto = targetWallet.Crypto;
@@ -100,13 +100,13 @@ namespace HaladoProg2.Controllers
 		}
 
 		[HttpPost("sell")]
-		public async Task<IActionResult> SellCrypto([FromBody] TradeSellDto tradeSellDto)
+		public async Task<IActionResult> SellCryptoAsync([FromBody] TradeSellDto tradeSellDto)
 		{
 			var user = await _userService.GetIncludesAsync(tradeSellDto.UserId);
 			if (user == null)
 				return NotFound("Nincs ilyen felhasználó!");
 
-			var wallet = user.Wallets.AsQueryable().Include(w => w.Crypto).Where(w => w.CryptoId == tradeSellDto.CryptoId).FirstOrDefault();
+			var wallet = user.Wallets.AsQueryable().Include(w => w.Crypto).FirstOrDefault(w => w.CryptoId == tradeSellDto.CryptoId);
 			if (wallet == null)
 				return NotFound("Nincs olyan pénztárcád, amiből eltudnád adni az adott kriptó típust!");
 

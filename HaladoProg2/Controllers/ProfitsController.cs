@@ -19,7 +19,7 @@ public class ProfitsController : ControllerBase
     }
     
     [HttpGet("{userId}")]
-    public async Task<IActionResult> GetUserProfitability(int userId)
+    public async Task<IActionResult> GetUserProfitabilityAsync(int userId)
     {
         var user = await _userService.GetIncludesAsync(userId);
 
@@ -38,7 +38,7 @@ public class ProfitsController : ControllerBase
     }
     
     [HttpGet("details/{userId}")]
-    public async Task<IActionResult> GetUserProfitabilityDetailed(int userId)
+    public async Task<IActionResult> GetUserProfitabilityDetailedAsync(int userId)
     {
         var user = await _userService.GetIncludesAsync(userId);
 

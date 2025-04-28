@@ -11,21 +11,17 @@ namespace HaladoProg2.Controllers
 	[Route("api/portfolio")]
 	public class PortfolioController : ControllerBase
 	{
-		private readonly ITransactionService _transactionService;
-		private readonly IWalletService _walletService;
 		private readonly ICryptoService _cryptoService;
 		private readonly IUserService _userService;
 
-		public PortfolioController(ITransactionService transactionService, IUserService userService, IWalletService walletService, ICryptoService cryptoService)
+		public PortfolioController(IUserService userService, ICryptoService cryptoService)
 		{
-			_transactionService = transactionService;
 			_userService = userService;
-			_walletService = walletService;
 			_cryptoService = cryptoService;
 		}
 
 		[HttpGet("{userId}")]
-		public async Task<IActionResult> GetPortfolio(int userId)
+		public async Task<IActionResult> GetPortfolioAsync(int userId)
 		{
 			var user = await _userService.GetIncludesAsync(userId);
 			if (user == null)
@@ -47,7 +43,7 @@ namespace HaladoProg2.Controllers
 				SellTransactionsCount = sellTransCount,
 				TotalNetWorth = totalWorth,
 				PortfolioWallets = walletCount <= 0 ? new List<PortfolioWalletDto>() :
-								userWallets.Where(w => w.CryptoCount > 0).ToList().ConvertAll(w => ConvertWalletToDto(w).Result),
+								userWallets.Where(w => w.CryptoCount > 0).ToList().ConvertAll(w => ConvertWalletToDtoAsync(w).Result),
 				PortfolioTransactionsBuy = buyTransCount <= 0 ? new List<PortfolioTransactionsDto>() : userBuyTransactions.ConvertAll(ConvertTransactionToDto),
 				PortfolioTransactionsSell = sellTransCount <= 0 ? new List<PortfolioTransactionsDto>() : userSellTransactions.ConvertAll(ConvertTransactionToDto)
 			};
@@ -62,7 +58,7 @@ namespace HaladoProg2.Controllers
 			return w.CryptoCount * crypto.CurrentPrice;
 		}
 
-		private async Task<PortfolioWalletDto> ConvertWalletToDto(Wallet w)
+		private async Task<PortfolioWalletDto> ConvertWalletToDtoAsync(Wallet w)
 		{
 			var crypto = await _cryptoService.GetAsync(w.CryptoId);
 			return new PortfolioWalletDto()

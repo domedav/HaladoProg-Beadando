@@ -16,6 +16,8 @@ namespace HaladoProg2.Services
 	{
 		Task<bool> CreateAsync(string username, string email, string password);
 		Task<User?> GetAsync(int userId);
+		Task<int?> GetIdByEmailAsync(string email);
+		Task<List<int>> GetAllUsersIdAsync();
 		Task<User?> GetIncludesAsync(int userId);
 		Task<bool> UpdateAsync(int userId, string username, string email, string password);
 		Task<bool> DeleteAsync(int userId);
@@ -70,7 +72,20 @@ namespace HaladoProg2.Services
 			var user = await _dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
 			return user;
 		}
-		
+
+		public async Task<int?> GetIdByEmailAsync(string email)
+		{
+			var user = _dbContext.Users.Where(u => u.Email == email).FirstOrDefault();
+			if (user == null)
+				return null;
+			return user.Id;
+		}
+
+		public async Task<List<int>> GetAllUsersIdAsync()
+		{
+			return _dbContext.Users.ToList().ConvertAll(c => c.Id);
+		}
+
 		public async Task<User?> GetIncludesAsync(int userId)
 		{
 			var user = await _dbContext.Users

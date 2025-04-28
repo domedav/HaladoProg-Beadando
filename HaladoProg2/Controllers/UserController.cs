@@ -13,14 +13,18 @@ namespace HaladoProg2.Controllers
 	public class UserController : ControllerBase
 	{
 		private readonly IUserService _userService;
+		private readonly ICryptoService _cryptoService;
+		private readonly IWalletService _walletService;
 
-		public UserController(IUserService userService)
+		public UserController(IUserService userService, ICryptoService cryptoService, IWalletService walletService)
 		{
 			_userService = userService;
+			_cryptoService = cryptoService;
+			_walletService = walletService;
 		}
 
 		[HttpPost("register")]
-		public async Task<IActionResult> RegisterUser([FromBody] UserRegisterDto userRegisterDto)
+		public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterDto userRegisterDto)
 		{
 			if (userRegisterDto.Username.Trim() == string.Empty ||
 				userRegisterDto.Email.Trim() == string.Empty ||
@@ -32,11 +36,18 @@ namespace HaladoProg2.Controllers
 			if (!result)
 				return BadRequest("Ez az email már regisztrálva van!");
 
+			var cryptos = await _cryptoService.GetAllAsync();
+			foreach (var crypto in cryptos)
+			{
+				var id = await _userService.GetIdByEmailAsync(userRegisterDto.Email);
+				await _walletService.CreateAsync((int)id, crypto.Id, 0); // empty wallet for the given crypto
+			}
+			
 			return Ok(result);
 		}
 
 		[HttpGet("{userId}")]
-		public async Task<IActionResult> GetUser(int userId)
+		public async Task<IActionResult> GetUserAsync(int userId)
 		{
 			var user = await _userService.GetAsync(userId);
 
@@ -48,7 +59,7 @@ namespace HaladoProg2.Controllers
 				Id = userId,
 				Username = user.Username,
 				Email = user.Email,
-				Wallets = user.Wallets == null ? [] : user.Wallets.ConvertAll(c => new WalletDataDto
+				Wallets = user.Wallets.ConvertAll(c => new WalletDataDto
 				{
 					Id = c.Id,
 					CryptoCount = c.CryptoCount,
@@ -59,7 +70,7 @@ namespace HaladoProg2.Controllers
 						CurrentPrice = c.Crypto.CurrentPrice,
 					}
 				}),
-				Transactions = user.Transactions == null ? [] : user.Transactions.ConvertAll(c => new TransactionDataDto
+				Transactions = user.Transactions.ConvertAll(c => new TransactionDataDto
 				{
 					Id= c.Id,
 					CryptoId = c.CryptoId,
@@ -72,7 +83,7 @@ namespace HaladoProg2.Controllers
 		}
 
 		[HttpPut("{userId}")]
-		public async Task<IActionResult> UpdateUser(int userId, [FromBody] UserUpdateDto userUpdateDto)
+		public async Task<IActionResult> UpdateUserAsync(int userId, [FromBody] UserUpdateDto userUpdateDto)
 		{
 			if (userUpdateDto.Username.Trim() == string.Empty ||
 				userUpdateDto.Email.Trim() == string.Empty ||
@@ -87,7 +98,7 @@ namespace HaladoProg2.Controllers
 		}
 
 		[HttpDelete("{userId}")]
-		public async Task<IActionResult> DeleteUser(int userId)
+		public async Task<IActionResult> DeleteUserAsync(int userId)
 		{
 			var result = await _userService.DeleteAsync(userId);
 			if (!result)
