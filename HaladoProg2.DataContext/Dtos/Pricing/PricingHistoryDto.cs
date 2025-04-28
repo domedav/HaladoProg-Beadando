@@ -1,5 +1,4 @@
 namespace HaladoProg2.DataContext.Dtos.Pricing;
-
 public class PricingHistoryDto
 {
     public int PriceHistoryId { get; set; }

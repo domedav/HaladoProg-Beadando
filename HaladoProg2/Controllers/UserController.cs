@@ -3,7 +3,6 @@ using HaladoProg2.DataContext.Dtos.Transaction;
 using HaladoProg2.DataContext.Dtos.User;
 using HaladoProg2.DataContext.Dtos.Wallet;
 using HaladoProg2.Services;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace HaladoProg2.Controllers
@@ -40,7 +39,7 @@ namespace HaladoProg2.Controllers
 			foreach (var crypto in cryptos)
 			{
 				var id = await _userService.GetIdByEmailAsync(userRegisterDto.Email);
-				await _walletService.CreateAsync((int)id, crypto.Id, 0); // empty wallet for the given crypto
+				await _walletService.CreateAsync((int)id!, crypto.Id, 0); // empty wallet for the given crypto
 			}
 			
 			return Ok(result);
@@ -106,5 +105,18 @@ namespace HaladoProg2.Controllers
 
 			return Ok(result);
 		}
+		
+		[HttpPut("money/{userId}")]
+		public async Task<IActionResult> AddMoney(int userId, [FromBody] UserMoneyDto userMoneyDto)
+		{
+			var user = await _userService.GetAsync(userId);
+			if (user == null)
+				return BadRequest("Nincs ilyen user!");
+
+			var result = await _userService.SetMoneyAsync(userId, userMoneyDto.UserMoney);
+
+			return Ok(result);
+		}
+
 	}
 }

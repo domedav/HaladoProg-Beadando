@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
-
 using HaladoProg2.DataContext.Context;
-using HaladoProg2.DataContext.Dtos.User;
 using HaladoProg2.DataContext.Entities;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace HaladoProg2.Services
@@ -21,8 +15,8 @@ namespace HaladoProg2.Services
 		Task<User?> GetIncludesAsync(int userId);
 		Task<bool> UpdateAsync(int userId, string username, string email, string password);
 		Task<bool> DeleteAsync(int userId);
-		Task<bool> SetMoney(int userId, double money);
-		Task<bool> ModifyMoney(int userId, double money);
+		Task<bool> SetMoneyAsync(int userId, double money);
+		Task<bool> ModifyMoneyAsync(int userId, double money);
 	}
 
 	public class UserService : IUserService
@@ -39,7 +33,7 @@ namespace HaladoProg2.Services
 				password.Trim() == string.Empty) // missing data
 				return false;
 
-			if (_dbContext.Users.Where(u => u.Email == email).Any()) // email not unique
+			if (await _dbContext.Users.AnyAsync(u => u.Email == email)) // email not unique
 				return false;
 
 			_dbContext.Users.Add(
@@ -47,7 +41,7 @@ namespace HaladoProg2.Services
 				{
 					Username = username,
 					Email = email,
-					Password = password,
+					Password = EncryptPassword(password),
 					Wallets = [],
 					Transactions = [],
 				});
@@ -58,10 +52,10 @@ namespace HaladoProg2.Services
 
 		public async Task<bool> DeleteAsync(int userId)
 		{
-			if (!_dbContext.Users.Where(u => u.Id == userId).Any())
+			if (!(await _dbContext.Users.AnyAsync(u => u.Id == userId)))
 				return false; // no such user
 
-			_dbContext.Users.Remove(await _dbContext.Users.Where(u => u.Id == userId).FirstAsync());
+			_dbContext.Users.Remove(await _dbContext.Users.FirstAsync(u => u.Id == userId));
 
 			await _dbContext.SaveChangesAsync();
 			return true;
@@ -69,13 +63,13 @@ namespace HaladoProg2.Services
 
 		public async Task<User?> GetAsync(int userId)
 		{
-			var user = await _dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+			var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
 			return user;
 		}
 
 		public async Task<int?> GetIdByEmailAsync(string email)
 		{
-			var user = _dbContext.Users.Where(u => u.Email == email).FirstOrDefault();
+			var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
 			if (user == null)
 				return null;
 			return user.Id;
@@ -96,9 +90,9 @@ namespace HaladoProg2.Services
 			return user;
 		}
 
-		public async Task<bool> SetMoney(int userId, double money)
+		public async Task<bool> SetMoneyAsync(int userId, double money)
 		{
-			var user = await _dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+			var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
 			if (user == null)
 				return false;
 
@@ -107,9 +101,9 @@ namespace HaladoProg2.Services
 			return true;
 		}
 
-		public async Task<bool> ModifyMoney(int userId, double money)
+		public async Task<bool> ModifyMoneyAsync(int userId, double money)
 		{
-			var user = await _dbContext.Users.Where(u => u.Id == userId).FirstOrDefaultAsync();
+			var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
 			if (user == null)
 				return false;
 
@@ -120,15 +114,24 @@ namespace HaladoProg2.Services
 
 		public async Task<bool> UpdateAsync(int userId, string username, string email, string password)
 		{
-			if (!_dbContext.Users.Where(u => u.Id == userId).Any())
+			if (!(await _dbContext.Users.AnyAsync(u => u.Id == userId)))
 				return false; // no such user
 
-			var user = await _dbContext.Users.Where(u => u.Id == userId).FirstAsync();
+			var user = await _dbContext.Users.FirstAsync(u => u.Id == userId);
 			user.Username = username;
 			user.Email = email;
-			user.Password = password;
+			user.Password = EncryptPassword(password);
 			await _dbContext.SaveChangesAsync();
 			return true;
+		}
+
+		private string EncryptPassword(string raw)
+		{
+			var sha256 = SHA256.Create();
+			byte[] hashValue;
+			UTF8Encoding objUtf8 = new UTF8Encoding();
+			hashValue = sha256.ComputeHash(objUtf8.GetBytes(raw));
+			return Convert.ToBase64String(hashValue);
 		}
 	}
 }

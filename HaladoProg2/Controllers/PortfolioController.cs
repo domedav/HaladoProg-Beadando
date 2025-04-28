@@ -1,9 +1,7 @@
 ﻿using HaladoProg2.DataContext.Dtos.Portfolio;
 using HaladoProg2.DataContext.Entities;
 using HaladoProg2.Services;
-
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace HaladoProg2.Controllers
 {
@@ -29,11 +27,11 @@ namespace HaladoProg2.Controllers
 
 			var userWallets = user.Wallets;
 			var userBuyTransactions = user.Transactions.Where(t => t.IsSelling == false).ToList();
-			var userSellTransactions = user.Transactions.Where(t => t.IsSelling == true).ToList();
+			var userSellTransactions = user.Transactions.Where(t => t.IsSelling).ToList();
 			
 			var walletCount = userWallets.Count;
-			var buyTransCount = userBuyTransactions.Count();
-			var sellTransCount = userSellTransactions.Count();
+			var buyTransCount = userBuyTransactions.Count;
+			var sellTransCount = userSellTransactions.Count;
 			var totalWorth = userWallets.Select(SumCryptoFromWalletAsync).Sum(result => result.Result);
 			var portfolioDto = new PortfolioDto
 			{
@@ -42,10 +40,10 @@ namespace HaladoProg2.Controllers
 				BuyTransactionsCount = buyTransCount,
 				SellTransactionsCount = sellTransCount,
 				TotalNetWorth = totalWorth,
-				PortfolioWallets = walletCount <= 0 ? new List<PortfolioWalletDto>() :
+				PortfolioWallets = walletCount <= 0 ? [] :
 								userWallets.Where(w => w.CryptoCount > 0).ToList().ConvertAll(w => ConvertWalletToDtoAsync(w).Result),
-				PortfolioTransactionsBuy = buyTransCount <= 0 ? new List<PortfolioTransactionsDto>() : userBuyTransactions.ConvertAll(ConvertTransactionToDto),
-				PortfolioTransactionsSell = sellTransCount <= 0 ? new List<PortfolioTransactionsDto>() : userSellTransactions.ConvertAll(ConvertTransactionToDto)
+				PortfolioTransactionsBuy = buyTransCount <= 0 ? [] : userBuyTransactions.ConvertAll(ConvertTransactionToDto),
+				PortfolioTransactionsSell = sellTransCount <= 0 ? [] : userSellTransactions.ConvertAll(ConvertTransactionToDto)
 			};
 			return Ok(portfolioDto);
 		}

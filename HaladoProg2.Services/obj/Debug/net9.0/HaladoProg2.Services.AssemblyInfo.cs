@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HaladoProg2.Services")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+76338e332736aa8a3331c612c71410db677f3b10")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cc6826508bbfe65c4fb29e7b2f27a4428bb5b7ec")]
 [assembly: System.Reflection.AssemblyProductAttribute("HaladoProg2.Services")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HaladoProg2.Services")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

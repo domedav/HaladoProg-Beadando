@@ -1,7 +1,5 @@
 ﻿using HaladoProg2.DataContext.Dtos.Trade;
 using HaladoProg2.Services;
-
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,9 +32,6 @@ namespace HaladoProg2.Controllers
 			if (user.UserMoney < tradeBuyDto.PriceInHuf)
 				return BadRequest("Nincs elegendő pénzed a megvásárláshoz!");
 
-			if (user.Wallets == null)
-				user.Wallets = new List<DataContext.Entities.Wallet>();
-
 			var targetWallet = user.Wallets.AsQueryable().Include(w => w.Crypto).FirstOrDefault(w => w.CryptoId == tradeBuyDto.CryptoId);
 			if(targetWallet == null) // the user doesnt have a wallet, that can store the given crypto
 			{
@@ -47,9 +42,7 @@ namespace HaladoProg2.Controllers
 				targetWallet = user.Wallets.AsQueryable().Include(w => w.Crypto).FirstOrDefault(w => w.CryptoId == tradeBuyDto.CryptoId);
 			}
 
-			var targetCrypto = targetWallet.Crypto;
-			if (targetCrypto == null)
-				return BadRequest("Nincs linkelve a kriptóId-hez objektum (backend hiba)!");
+			var targetCrypto = targetWallet!.Crypto;
 
 			var cryptoQuantity = tradeBuyDto.PriceInHuf / targetCrypto.CurrentPrice;
 
@@ -86,7 +79,7 @@ namespace HaladoProg2.Controllers
 				return BadRequest("Error while creating a new transaction!");
 
 			// make the user spend the money
-			result &= await _userService.ModifyMoney(
+			result &= await _userService.ModifyMoneyAsync(
 				user.Id,
 				-tradeBuyDto.PriceInHuf); // modify user money
 			if (!result)
@@ -114,8 +107,6 @@ namespace HaladoProg2.Controllers
 				return BadRequest("Nincs elegendő mennyiségű kriptód az eladáshoz!");
 
 			var targetCrypto = wallet.Crypto;
-			if (targetCrypto == null)
-				return BadRequest("Nincs linkelve a kriptóId-hez objektum (backend hiba)!");
 
 			var earnedHuf = tradeSellDto.Quantity * targetCrypto.CurrentPrice;
 
@@ -148,7 +139,7 @@ namespace HaladoProg2.Controllers
 				return BadRequest("Error while creating a new transaction!");
 
 			// make the user spend the money
-			result &= await _userService.ModifyMoney(
+			result &= await _userService.ModifyMoneyAsync(
 				user.Id,
 				earnedHuf); // modify user money
 			if (!result)

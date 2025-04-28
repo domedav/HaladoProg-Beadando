@@ -1,6 +1,5 @@
 ﻿using HaladoProg2.DataContext.Context;
 using HaladoProg2.DataContext.Entities;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace HaladoProg2.Services
@@ -38,10 +37,10 @@ namespace HaladoProg2.Services
 
 		public async Task<bool> DeleteAsync(int walletId)
 		{
-			if (!_dbContext.Wallets.Where(w => w.Id == walletId).Any())
+			if (!(await _dbContext.Wallets.AnyAsync(w => w.Id == walletId)))
 				return false; // no such wallet
 
-			_dbContext.Wallets.Remove(await _dbContext.Wallets.Where(w => w.Id == walletId).FirstAsync());
+			_dbContext.Wallets.Remove(await _dbContext.Wallets.FirstAsync(w => w.Id == walletId));
 
 			await _dbContext.SaveChangesAsync();
 			return true;
@@ -49,16 +48,16 @@ namespace HaladoProg2.Services
 
 		public async Task<Wallet?> GetAsync(int walletId)
 		{
-			var wallet = await _dbContext.Wallets.Where(w => w.Id == walletId).FirstOrDefaultAsync();
+			var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(w => w.Id == walletId);
 			return wallet;
 		}
 
 		public async Task<bool> UpdateAsync(int walletId, int userId, int cryptoId, double cryptoCount)
 		{
-			if (!_dbContext.Wallets.Where(w => w.Id == walletId).Any())
+			if (!(await _dbContext.Wallets.AnyAsync(w => w.Id == walletId)))
 				return false; // no such wallet
 
-			var wallet = await _dbContext.Wallets.Where(w => w.Id == walletId).FirstAsync();
+			var wallet = await _dbContext.Wallets.FirstAsync(w => w.Id == walletId);
 			wallet.UserId = userId;
 			wallet.CryptoId = cryptoId;
 			wallet.CryptoCount = cryptoCount;

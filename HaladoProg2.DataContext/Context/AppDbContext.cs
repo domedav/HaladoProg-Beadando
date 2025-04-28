@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using HaladoProg2.DataContext.Entities;
-
+﻿using HaladoProg2.DataContext.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace HaladoProg2.DataContext.Context
 {

@@ -37,7 +37,7 @@ builder.Services.AddSingleton<IHostedService, CryptoPricingUpdaterBackgroundServ
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-	c.SwaggerDoc("v1", new OpenApiInfo { Title = "Halad�ProgAPI", Version = "v1" });
+	c.SwaggerDoc("v1", new OpenApiInfo { Title = "Crypto JBPWXQ", Version = "v1" });
 });
 
 var app = builder.Build();
@@ -47,7 +47,7 @@ if (app.Environment.IsDevelopment())
 {
 	app.MapOpenApi();
 	app.UseSwagger();
-	app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HaladóProgAPI v1"));
+	app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Crypto JBPWXQ v1"));
 }
 app.UseCors("AllowAll");
 

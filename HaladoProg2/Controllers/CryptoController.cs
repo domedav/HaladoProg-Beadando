@@ -1,7 +1,5 @@
 ﻿using HaladoProg2.DataContext.Dtos.Crypto;
-using HaladoProg2.DataContext.Entities;
 using HaladoProg2.Services;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,8 +12,7 @@ namespace HaladoProg2.Controllers
 		private readonly ICryptoService _cryptoService;
 		private readonly IUserService _userService;
 		private readonly IWalletService _walletService;
-
-
+		
 		public CryptoController(ICryptoService cryptoService, IUserService userService, IWalletService walletService)
 		{
 			_cryptoService = cryptoService;

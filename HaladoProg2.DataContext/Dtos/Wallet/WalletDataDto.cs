@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using HaladoProg2.DataContext.Dtos.Crypto;
+﻿using HaladoProg2.DataContext.Dtos.Crypto;
 
 namespace HaladoProg2.DataContext.Dtos.Wallet
 {

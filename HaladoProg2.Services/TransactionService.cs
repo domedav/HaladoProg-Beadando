@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using HaladoProg2.DataContext.Context;
+﻿using HaladoProg2.DataContext.Context;
 using HaladoProg2.DataContext.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +39,7 @@ namespace HaladoProg2.Services
 
 		public async Task<Transaction?> GetAsync(int transactionId)
 		{
-			var transaction = await _dbContext.Transactions.Where(t => t.Id == transactionId).FirstOrDefaultAsync();
+			var transaction = await _dbContext.Transactions.FirstOrDefaultAsync(t => t.Id == transactionId);
 			return transaction;
 		}
 	}

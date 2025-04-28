@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-using HaladoProg2.DataContext.Dtos.Transaction;
+﻿using HaladoProg2.DataContext.Dtos.Transaction;
 using HaladoProg2.Services;
 
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +26,7 @@ namespace HaladoProg2.Controllers
 				return NotFound("Nincs ilyen felhasználó!");
 
 			var transactions = user.Transactions;
-			if (transactions == null || transactions.Count <= 0)
+			if (transactions.Count <= 0)
 				return NotFound("Ennek a felhasználónak nincs tranzakciós története!");
 
 			var result = transactions.OrderBy(t => t.TransactionTime).ToList().ConvertAll(c => new TransactionDataDto

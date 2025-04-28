@@ -34,7 +34,7 @@ namespace HaladoProg2.Controllers
 				TotalCryptoTypesCount = user.Wallets.Count,
 				Wallets = user.Wallets.AsQueryable()
 					.Include(w => w.Crypto) // we need the object resolved here
-					.ToList().ConvertAll(c => new WalletGetSubDto
+					.ToList().ConvertAll(c => new WalletGetCryptoDto
 				{
 					Id = c.Id,
 					CryptoId = c.CryptoId,

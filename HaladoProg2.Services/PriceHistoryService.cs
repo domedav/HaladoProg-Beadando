@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using HaladoProg2.DataContext.Context;
+﻿using HaladoProg2.DataContext.Context;
 using HaladoProg2.DataContext.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +8,7 @@ namespace HaladoProg2.Services
 	public interface IPriceHistoryService
 	{
 		Task<List<PriceHistory>> GetAllAsync();
-		Task<PriceHistory> GetAsync(int historyId);
+		Task<PriceHistory?> GetAsync(int historyId);
 		Task<bool> CreateAsync(int cryptoId, double currentPrice, DateTime time);
 	}
 
@@ -46,9 +40,9 @@ namespace HaladoProg2.Services
 			return _dbContext.PriceHistories.AsEnumerable().ToList();
 		}
 
-		public async Task<PriceHistory> GetAsync(int historyId)
+		public async Task<PriceHistory?> GetAsync(int historyId)
 		{
-			var history = await _dbContext.PriceHistories.Where(p => p.Id == historyId).FirstAsync();
+			var history = await _dbContext.PriceHistories.FirstOrDefaultAsync(p => p.Id == historyId);
 			return history;
 		}
 	}

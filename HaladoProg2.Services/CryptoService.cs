@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using HaladoProg2.DataContext.Context;
+﻿using HaladoProg2.DataContext.Context;
 using HaladoProg2.DataContext.Entities;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace HaladoProg2.Services
@@ -53,10 +46,10 @@ namespace HaladoProg2.Services
 
 		public async Task<bool> DeleteAsync(int crpytoId)
 		{
-			if (!_dbContext.CryptoCurrencies.Where(c => c.Id == crpytoId).Any())
+			if (!_dbContext.CryptoCurrencies.Any(c => c.Id == crpytoId))
 				return false; // no such crypto
 
-			_dbContext.CryptoCurrencies.Remove(await _dbContext.CryptoCurrencies.Where(c => c.Id == crpytoId).FirstAsync());
+			_dbContext.CryptoCurrencies.Remove(await _dbContext.CryptoCurrencies.FirstAsync(c => c.Id == crpytoId));
 
 			await _dbContext.SaveChangesAsync();
 			return true;
@@ -69,13 +62,13 @@ namespace HaladoProg2.Services
 
 		public async Task<Crypto?> GetAsync(int crpytoId)
 		{
-			var crypto = await _dbContext.CryptoCurrencies.Where(c => c.Id == crpytoId).FirstOrDefaultAsync();
+			var crypto = await _dbContext.CryptoCurrencies.FirstOrDefaultAsync(c => c.Id == crpytoId);
 			return crypto;
 		}
 
 		public async Task<int?> GetCryptoIdByNameAsync(string name)
 		{
-			var crypto = _dbContext.CryptoCurrencies.Where(c => c.Name == name).FirstOrDefault();
+			var crypto = await _dbContext.CryptoCurrencies.FirstOrDefaultAsync(c => c.Name == name);
 			if (crypto == null)
 				return null;
 			return crypto.Id;
@@ -86,17 +79,16 @@ namespace HaladoProg2.Services
 			var crypto = await _dbContext.CryptoCurrencies
 				.Include(c => c.PriceHistories)
 				.Include(c => c.Transactions)
-				.Include(c => c.ContainingWallets)
-				.Where(c => c.Id == crpytoId).FirstOrDefaultAsync();
+				.Include(c => c.ContainingWallets).FirstOrDefaultAsync(c => c.Id == crpytoId);
 			return crypto;
 		}
 
 		public async Task<bool> UpdateAsync(int crpytoId, string name, double availableQuantity, double currentPrice)
 		{
-			if (!_dbContext.CryptoCurrencies.Where(c => c.Id == crpytoId).Any())
+			if (!_dbContext.CryptoCurrencies.Any(c => c.Id == crpytoId))
 				return false; // no such user
 
-			var crypto = await _dbContext.CryptoCurrencies.Where(c => c.Id == crpytoId).FirstAsync();
+			var crypto = await _dbContext.CryptoCurrencies.FirstAsync(c => c.Id == crpytoId);
 			crypto.CurrentPrice = currentPrice;
 			crypto.AvailableQuantity = availableQuantity;
 			crypto.Name = name;
