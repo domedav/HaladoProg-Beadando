@@ -44,6 +44,7 @@ namespace HaladoProg2.Services
 					Password = EncryptPassword(password),
 					Wallets = [],
 					Transactions = [],
+					UserMoney = 10000 // default money
 				});
 
 			await _dbContext.SaveChangesAsync();
