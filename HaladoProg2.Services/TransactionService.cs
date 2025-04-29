@@ -9,6 +9,14 @@ namespace HaladoProg2.Services
 	{
 		Task<bool> CreateAsync(int userId, int cryptoId, double transactionQuantity, double transactionPrice, DateTime transactionTime, bool selling);
 		Task<Transaction?> GetAsync(int transactionId);
+		Task<List<Transaction>> GetUserBuyingAsync(int userId);
+		Task<List<Transaction>> GetUserAllAsync(int userId);
+		Task<double> GetSumUserBuyingAsync(int userId);
+		Task<double> GetSumUserBuyingCryptoAsync(int userId, int cryptoId);
+		Task<List<Transaction>> GetUserSellingAsync(int userId);
+		Task<double> GetSumUserSellingAsync(int userId);
+		Task<double> GetSumUserSellingCryptoAsync(int userId, int cryptoId);
+
 	}
 
 	public class TransactionService : ITransactionService
@@ -41,6 +49,48 @@ namespace HaladoProg2.Services
 		{
 			var transaction = await _dbContext.Transactions.FirstOrDefaultAsync(t => t.Id == transactionId);
 			return transaction;
+		}
+
+		public async Task<List<Transaction>> GetUserBuyingAsync(int userId)
+		{
+			var result = await _dbContext.Transactions.Where(t => !t.IsSelling && t.UserId == userId).ToListAsync();
+			return result;
+		}
+
+		public async Task<List<Transaction>> GetUserAllAsync(int userId)
+		{
+			var result = await _dbContext.Transactions.Where(t => t.UserId == userId).ToListAsync();
+			return result;
+		}
+
+		public async Task<double> GetSumUserBuyingAsync(int userId)
+		{
+			var buying = await GetUserBuyingAsync(userId);
+			return buying.Sum(item => item.TransactionQuantity * item.TransactionPrice);
+		}
+
+		public async Task<double> GetSumUserBuyingCryptoAsync(int userId, int cryptoId)
+		{
+			var result = await _dbContext.Transactions.Where(t => !t.IsSelling && t.UserId == userId && t.CryptoId == cryptoId).ToListAsync();
+			return result.Sum(item => item.TransactionQuantity * item.TransactionPrice);
+		}
+
+		public async Task<List<Transaction>> GetUserSellingAsync(int userId)
+		{
+			var result = await _dbContext.Transactions.Where(t => t.IsSelling && t.UserId == userId).ToListAsync();
+			return result;
+		}
+
+		public async Task<double> GetSumUserSellingAsync(int userId)
+		{
+			var buying = await GetUserSellingAsync(userId);
+			return buying.Sum(item => item.TransactionQuantity * item.TransactionPrice);
+		}
+
+		public async Task<double> GetSumUserSellingCryptoAsync(int userId, int cryptoId)
+		{
+			var result = await _dbContext.Transactions.Where(t => t.IsSelling && t.UserId == userId && t.CryptoId == cryptoId).ToListAsync();
+			return result.Sum(item => item.TransactionQuantity * item.TransactionPrice);
 		}
 	}
 }

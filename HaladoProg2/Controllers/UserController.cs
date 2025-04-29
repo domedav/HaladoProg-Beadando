@@ -14,26 +14,23 @@ namespace HaladoProg2.Controllers
 		private readonly IUserService _userService;
 		private readonly ICryptoService _cryptoService;
 		private readonly IWalletService _walletService;
+		private readonly ITransactionService _transactionService;
 
-		public UserController(IUserService userService, ICryptoService cryptoService, IWalletService walletService)
+		public UserController(IUserService userService, ICryptoService cryptoService, IWalletService walletService, ITransactionService transactionService)
 		{
 			_userService = userService;
 			_cryptoService = cryptoService;
 			_walletService = walletService;
+			_transactionService = transactionService;
 		}
 
 		[HttpPost("register")]
 		public async Task<IActionResult> RegisterUserAsync([FromBody] UserRegisterDto userRegisterDto)
 		{
-			if (userRegisterDto.Username.Trim() == string.Empty ||
-				userRegisterDto.Email.Trim() == string.Empty ||
-				userRegisterDto.Password.Trim() == string.Empty)
-				return BadRequest("Egy vagy több adat nem lett kitöltve!");
-
 			var result = await _userService.CreateAsync(userRegisterDto.Username, userRegisterDto.Email, userRegisterDto.Password);
 
 			if (!result)
-				return BadRequest("Ez az email már regisztrálva van!");
+				return BadRequest("Ez az email már regisztrálva van! Vagy hibás a megadott regisztrációs adatlap!");
 
 			var cryptos = await _cryptoService.GetAllAsync();
 			foreach (var crypto in cryptos)
@@ -53,12 +50,14 @@ namespace HaladoProg2.Controllers
 			if (user == null)
 				return NotFound("Ez a felhasználó nem létezik!");
 
+			var userWallets = await _walletService.GetUserWallets(userId);
+			var userTrans = await _transactionService.GetUserAllAsync(userId);
 			var userDto = new UserDataDto // create a dto from the user data
 			{
 				Id = userId,
 				Username = user.Username,
 				Email = user.Email,
-				Wallets = user.Wallets.ConvertAll(c => new WalletDataDto
+				Wallets = userWallets.ConvertAll(c => new WalletDataDto
 				{
 					Id = c.Id,
 					CryptoCount = c.CryptoCount,
@@ -69,7 +68,7 @@ namespace HaladoProg2.Controllers
 						CurrentPrice = c.Crypto.CurrentPrice,
 					}
 				}),
-				Transactions = user.Transactions.ConvertAll(c => new TransactionDataDto
+				Transactions = userTrans.ConvertAll(c => new TransactionDataDto
 				{
 					Id= c.Id,
 					CryptoId = c.CryptoId,
@@ -84,11 +83,6 @@ namespace HaladoProg2.Controllers
 		[HttpPut("{userId}")]
 		public async Task<IActionResult> UpdateUserAsync(int userId, [FromBody] UserUpdateDto userUpdateDto)
 		{
-			if (userUpdateDto.Username.Trim() == string.Empty ||
-				userUpdateDto.Email.Trim() == string.Empty ||
-				userUpdateDto.Password.Trim() == string.Empty)
-				return BadRequest("Egy vagy több adat nem lett kitöltve!");
-
 			var result = await _userService.UpdateAsync(userId, userUpdateDto.Username, userUpdateDto.Email, userUpdateDto.Password);
 			if (!result)
 				return BadRequest("Nem sikerült a felhasználói adatokat módosítani!");

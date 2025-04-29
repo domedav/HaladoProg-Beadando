@@ -7,12 +7,12 @@ namespace HaladoProg2.Services
 	public interface ICryptoService
 	{
 		Task<List<Crypto>> GetAllAsync();
-		Task<Crypto?> GetAsync(int crpytoId);
+		Task<Crypto?> GetAsync(int cryptoId);
 		Task<int?> GetCryptoIdByNameAsync(string name);
-		Task<Crypto?> GetIncludesAsync(int crpytoId);
+		Task<List<PriceHistory>> GetPriceHistoriesAsync(int cryptoId);
 		Task<bool> CreateAsync(string name, double availableQuantity, double currentPrice);
-		Task<bool> UpdateAsync(int crpytoId, string name, double availableQuantity, double currentPrice);
-		Task<bool> DeleteAsync(int crpytoId);
+		Task<bool> UpdateAsync(int cryptoId, string name, double availableQuantity, double currentPrice);
+		Task<bool> DeleteAsync(int cryptoId);
 	}
 
 	public class CryptoService : ICryptoService
@@ -21,6 +21,12 @@ namespace HaladoProg2.Services
 		public CryptoService(AppDbContext dbContext)
 		{
 			_dbContext = dbContext;
+		}
+
+		public async Task<List<PriceHistory>> GetPriceHistoriesAsync(int cryptoId)
+		{
+			var crypto = await _dbContext.CryptoCurrencies.Include(c => c.PriceHistories).FirstOrDefaultAsync(c => c.Id == cryptoId);
+			return crypto == null ? [] : crypto.PriceHistories;
 		}
 
 		public async Task<bool> CreateAsync(string name, double availableQuantity, double currentPrice)
@@ -44,12 +50,12 @@ namespace HaladoProg2.Services
 			return true;
 		}
 
-		public async Task<bool> DeleteAsync(int crpytoId)
+		public async Task<bool> DeleteAsync(int cryptoId)
 		{
-			if (!_dbContext.CryptoCurrencies.Any(c => c.Id == crpytoId))
+			if (!_dbContext.CryptoCurrencies.Any(c => c.Id == cryptoId))
 				return false; // no such crypto
 
-			_dbContext.CryptoCurrencies.Remove(await _dbContext.CryptoCurrencies.FirstAsync(c => c.Id == crpytoId));
+			_dbContext.CryptoCurrencies.Remove(await _dbContext.CryptoCurrencies.FirstAsync(c => c.Id == cryptoId));
 
 			await _dbContext.SaveChangesAsync();
 			return true;
@@ -57,38 +63,27 @@ namespace HaladoProg2.Services
 
 		public async Task<List<Crypto>> GetAllAsync()
 		{
-			return _dbContext.CryptoCurrencies.AsEnumerable().ToList();
+			return await _dbContext.CryptoCurrencies.AsQueryable().ToListAsync();
 		}
 
-		public async Task<Crypto?> GetAsync(int crpytoId)
+		public async Task<Crypto?> GetAsync(int cryptoId)
 		{
-			var crypto = await _dbContext.CryptoCurrencies.FirstOrDefaultAsync(c => c.Id == crpytoId);
+			var crypto = await _dbContext.CryptoCurrencies.FirstOrDefaultAsync(c => c.Id == cryptoId);
 			return crypto;
 		}
 
 		public async Task<int?> GetCryptoIdByNameAsync(string name)
 		{
 			var crypto = await _dbContext.CryptoCurrencies.FirstOrDefaultAsync(c => c.Name == name);
-			if (crypto == null)
-				return null;
-			return crypto.Id;
+			return crypto?.Id;
 		}
 
-		public async Task<Crypto?> GetIncludesAsync(int crpytoId)
+		public async Task<bool> UpdateAsync(int cryptoId, string name, double availableQuantity, double currentPrice)
 		{
-			var crypto = await _dbContext.CryptoCurrencies
-				.Include(c => c.PriceHistories)
-				.Include(c => c.Transactions)
-				.Include(c => c.ContainingWallets).FirstOrDefaultAsync(c => c.Id == crpytoId);
-			return crypto;
-		}
-
-		public async Task<bool> UpdateAsync(int crpytoId, string name, double availableQuantity, double currentPrice)
-		{
-			if (!_dbContext.CryptoCurrencies.Any(c => c.Id == crpytoId))
+			if (!_dbContext.CryptoCurrencies.Any(c => c.Id == cryptoId))
 				return false; // no such user
 
-			var crypto = await _dbContext.CryptoCurrencies.FirstAsync(c => c.Id == crpytoId);
+			var crypto = await _dbContext.CryptoCurrencies.FirstAsync(c => c.Id == cryptoId);
 			crypto.CurrentPrice = currentPrice;
 			crypto.AvailableQuantity = availableQuantity;
 			crypto.Name = name;

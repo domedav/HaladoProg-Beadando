@@ -12,11 +12,11 @@ namespace HaladoProg2.Services
 		Task<User?> GetAsync(int userId);
 		Task<int?> GetIdByEmailAsync(string email);
 		Task<List<int>> GetAllUsersIdAsync();
-		Task<User?> GetIncludesAsync(int userId);
 		Task<bool> UpdateAsync(int userId, string username, string email, string password);
 		Task<bool> DeleteAsync(int userId);
 		Task<bool> SetMoneyAsync(int userId, double money);
 		Task<bool> ModifyMoneyAsync(int userId, double money);
+		Task<double> GetAllWalletWorthAsync(int userId);
 	}
 
 	public class UserService : IUserService
@@ -71,24 +71,12 @@ namespace HaladoProg2.Services
 		public async Task<int?> GetIdByEmailAsync(string email)
 		{
 			var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
-			if (user == null)
-				return null;
-			return user.Id;
+			return user?.Id;
 		}
 
 		public async Task<List<int>> GetAllUsersIdAsync()
 		{
-			return _dbContext.Users.ToList().ConvertAll(c => c.Id);
-		}
-
-		public async Task<User?> GetIncludesAsync(int userId)
-		{
-			var user = await _dbContext.Users
-				.Include(u => u.Wallets)
-					.ThenInclude(w => w.Crypto)
-				.Include(u => u.Transactions)
-				.Where(u => u.Id == userId).FirstOrDefaultAsync();
-			return user;
+			return (await _dbContext.Users.ToListAsync()).ConvertAll(c => c.Id);
 		}
 
 		public async Task<bool> SetMoneyAsync(int userId, double money)
@@ -113,8 +101,21 @@ namespace HaladoProg2.Services
 			return true;
 		}
 
+		public async Task<double> GetAllWalletWorthAsync(int userId)
+		{
+			var user = await _dbContext.Users.Include(u => u.Wallets).ThenInclude(w => w.Crypto).FirstOrDefaultAsync(u => u.Id == userId);
+			if (user == null)
+				return 0;
+			return user.Wallets.Sum(wallet => wallet.CryptoCount * wallet.Crypto.CurrentPrice);
+		}
+
 		public async Task<bool> UpdateAsync(int userId, string username, string email, string password)
 		{
+			if (username.Trim() == string.Empty ||
+			    email.Trim() == string.Empty ||
+			    password.Trim() == string.Empty) // missing data
+				return false;
+			
 			if (!(await _dbContext.Users.AnyAsync(u => u.Id == userId)))
 				return false; // no such user
 
@@ -127,12 +128,10 @@ namespace HaladoProg2.Services
 		}
 
 		private string EncryptPassword(string raw)
-		{
-			var sha256 = SHA256.Create();
-			byte[] hashValue;
-			UTF8Encoding objUtf8 = new UTF8Encoding();
-			hashValue = sha256.ComputeHash(objUtf8.GetBytes(raw));
-			return Convert.ToBase64String(hashValue);
-		}
-	}
+        {
+            var objUtf8 = new UTF8Encoding();
+            var hashValue = SHA256.HashData(objUtf8.GetBytes(raw));
+            return Convert.ToBase64String(hashValue);
+        }
+    }
 }

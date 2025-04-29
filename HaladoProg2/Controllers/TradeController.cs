@@ -25,24 +25,18 @@ namespace HaladoProg2.Controllers
 		[HttpPost("buy")]
 		public async Task<IActionResult> BuyCryptoAsync([FromBody] TradeBuyDto tradeBuyDto)
 		{
-			var user = await _userService.GetIncludesAsync(tradeBuyDto.UserId);
+			var user = await _userService.GetAsync(tradeBuyDto.UserId);
 			if (user == null)
 				return NotFound("Nincs ilyen felhasználó!");
 
 			if (user.UserMoney < tradeBuyDto.PriceInHuf)
 				return BadRequest("Nincs elegendő pénzed a megvásárláshoz!");
 
-			var targetWallet = user.Wallets.AsQueryable().Include(w => w.Crypto).FirstOrDefault(w => w.CryptoId == tradeBuyDto.CryptoId);
-			if(targetWallet == null) // the user doesnt have a wallet, that can store the given crypto
-			{
-				// create a new wallet for the user to store this crypto
-				var result1 = await _walletService.CreateAsync(user.Id, tradeBuyDto.CryptoId, 0);
-				if (!result1)
-					return BadRequest("Hiba történt amikor a felhasználóhoz új tárcát akartunk hozzáadni!");
-				targetWallet = user.Wallets.AsQueryable().Include(w => w.Crypto).FirstOrDefault(w => w.CryptoId == tradeBuyDto.CryptoId);
-			}
-
-			var targetCrypto = targetWallet!.Crypto;
+			var targetWallet = await _walletService.GetUserWalletWithCryptoAsync(tradeBuyDto.UserId, tradeBuyDto.CryptoId);
+			if (targetWallet == null)
+				return NotFound("A felhasználónak hiányzik az ilyen típusú kriptó tárcája");
+			
+			var targetCrypto = targetWallet.Crypto;
 
 			var cryptoQuantity = tradeBuyDto.PriceInHuf / targetCrypto.CurrentPrice;
 
@@ -95,32 +89,32 @@ namespace HaladoProg2.Controllers
 		[HttpPost("sell")]
 		public async Task<IActionResult> SellCryptoAsync([FromBody] TradeSellDto tradeSellDto)
 		{
-			var user = await _userService.GetIncludesAsync(tradeSellDto.UserId);
+			var user = await _userService.GetAsync(tradeSellDto.UserId);
 			if (user == null)
 				return NotFound("Nincs ilyen felhasználó!");
 
-			var wallet = user.Wallets.AsQueryable().Include(w => w.Crypto).FirstOrDefault(w => w.CryptoId == tradeSellDto.CryptoId);
-			if (wallet == null)
-				return NotFound("Nincs olyan pénztárcád, amiből eltudnád adni az adott kriptó típust!");
+			var targetWallet = await _walletService.GetUserWalletWithCryptoAsync(tradeSellDto.UserId, tradeSellDto.CryptoId);
+			if (targetWallet == null)
+				return NotFound("A felhasználónak hiányzik az ilyen típusú kriptó tárcája");
 
-			if (wallet.CryptoCount < tradeSellDto.Quantity)
+			if (targetWallet.CryptoCount < tradeSellDto.Quantity)
 				return BadRequest("Nincs elegendő mennyiségű kriptód az eladáshoz!");
 
-			var targetCrypto = wallet.Crypto;
+			var targetCrypto = targetWallet.Crypto;
 
 			var earnedHuf = tradeSellDto.Quantity * targetCrypto.CurrentPrice;
 
 			var result = await _walletService.UpdateAsync(
-				wallet.Id,
-				wallet.UserId,
-				wallet.CryptoId,
-				wallet.CryptoCount - tradeSellDto.Quantity); // we give negative ammount of the sold crypto
+				targetWallet.Id,
+				targetWallet.UserId,
+				targetWallet.CryptoId,
+				targetWallet.CryptoCount - tradeSellDto.Quantity); // we give negative ammount of the sold crypto
 			if (!result)
 				return BadRequest("Hiba történt a tárca frissítése közben!");
 
 			// change overall available crypto count
 			result &= await _cryptoService.UpdateAsync(
-				wallet.CryptoId,
+				targetWallet.CryptoId,
 				targetCrypto.Name,
 				targetCrypto.AvailableQuantity + tradeSellDto.Quantity, // change the quantity
 				targetCrypto.CurrentPrice);
@@ -129,8 +123,8 @@ namespace HaladoProg2.Controllers
 
 			// create a transaction
 			result &= await _transactionService.CreateAsync(
-				wallet.UserId,
-				wallet.CryptoId,
+				targetWallet.UserId,
+				targetWallet.CryptoId,
 				tradeSellDto.Quantity,
 				targetCrypto.CurrentPrice,
 				DateTime.Now,
@@ -147,7 +141,7 @@ namespace HaladoProg2.Controllers
 
 			return Ok(new TradeSellResultDto
 			{
-				WalletId = wallet.Id,
+				WalletId = targetWallet.Id,
 				RecievedMoney = earnedHuf
 			});
 		}

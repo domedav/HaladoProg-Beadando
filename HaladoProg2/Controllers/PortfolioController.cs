@@ -11,28 +11,30 @@ namespace HaladoProg2.Controllers
 	{
 		private readonly ICryptoService _cryptoService;
 		private readonly IUserService _userService;
+		private readonly ITransactionService _transactionService;
 
-		public PortfolioController(IUserService userService, ICryptoService cryptoService)
+		public PortfolioController(IUserService userService, ICryptoService cryptoService, ITransactionService transactionService)
 		{
 			_userService = userService;
 			_cryptoService = cryptoService;
+			_transactionService = transactionService;
 		}
 
 		[HttpGet("{userId}")]
 		public async Task<IActionResult> GetPortfolioAsync(int userId)
 		{
-			var user = await _userService.GetIncludesAsync(userId);
+			var user = await _userService.GetAsync(userId);
 			if (user == null)
 				return NotFound("Nincs ilyen felhasználó!");
 
 			var userWallets = user.Wallets;
-			var userBuyTransactions = user.Transactions.Where(t => t.IsSelling == false).ToList();
-			var userSellTransactions = user.Transactions.Where(t => t.IsSelling).ToList();
+			var userBuyTransactions = await _transactionService.GetUserBuyingAsync(userId);
+			var userSellTransactions = await _transactionService.GetUserSellingAsync(userId);
 			
 			var walletCount = userWallets.Count;
 			var buyTransCount = userBuyTransactions.Count;
 			var sellTransCount = userSellTransactions.Count;
-			var totalWorth = userWallets.Select(SumCryptoFromWalletAsync).Sum(result => result.Result);
+			var totalWorth = await _userService.GetAllWalletWorthAsync(userId);
 			var portfolioDto = new PortfolioDto
 			{
 				UserName = user.Username,
@@ -46,14 +48,6 @@ namespace HaladoProg2.Controllers
 				PortfolioTransactionsSell = sellTransCount <= 0 ? [] : userSellTransactions.ConvertAll(ConvertTransactionToDto)
 			};
 			return Ok(portfolioDto);
-		}
-
-		private async Task<double> SumCryptoFromWalletAsync(Wallet w)
-		{
-			var crypto = await _cryptoService.GetAsync(w.CryptoId);
-			if(crypto == null)
-				return 0;
-			return w.CryptoCount * crypto.CurrentPrice;
 		}
 
 		private async Task<PortfolioWalletDto> ConvertWalletToDtoAsync(Wallet w)

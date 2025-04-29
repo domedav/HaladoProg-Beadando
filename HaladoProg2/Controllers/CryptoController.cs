@@ -51,14 +51,9 @@ namespace HaladoProg2.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateCryptoAsync([FromBody] CryptoCreateDto cryptoCreateDto)
 		{
-			if (cryptoCreateDto.CurrentPrice < 0 ||
-			    cryptoCreateDto.AvailableQuantity < 0 ||
-			    cryptoCreateDto.Name.Trim() == string.Empty)
-				return BadRequest("A kért művelet nem valósítható meg, mert érvénytelen értéket tartalmaz!");
-
 			var result = await _cryptoService.CreateAsync(cryptoCreateDto.Name, cryptoCreateDto.AvailableQuantity, cryptoCreateDto.CurrentPrice);
 			if (!result)
-				return BadRequest("Nem sikerült a kért kriptót létrehozni!");
+				return BadRequest("A kért művelet nem valósítható meg, mert érvénytelen értéket tartalmaz!");
 
 			var id = await _cryptoService.GetCryptoIdByNameAsync(cryptoCreateDto.Name);
 			if (id == null)

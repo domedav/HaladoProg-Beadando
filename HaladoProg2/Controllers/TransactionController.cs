@@ -21,11 +21,11 @@ namespace HaladoProg2.Controllers
 		[HttpGet("{userId}")]
 		public async Task<IActionResult> GetTransactionsAsync(int userId)
 		{
-			var user = await _userService.GetIncludesAsync(userId);
+			var user = await _userService.GetAsync(userId);
 			if (user == null)
 				return NotFound("Nincs ilyen felhasználó!");
-
-			var transactions = user.Transactions;
+			
+			var transactions = await _transactionService.GetUserAllAsync(userId);
 			if (transactions.Count <= 0)
 				return NotFound("Ennek a felhasználónak nincs tranzakciós története!");
 

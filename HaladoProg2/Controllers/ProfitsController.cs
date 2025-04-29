@@ -10,25 +10,27 @@ namespace HaladoProg2.Controllers
     public class ProfitsController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly ICryptoService _cryptoService;
+        private readonly IWalletService _walletService;
+        private readonly ITransactionService _transactionService;
 
-        public ProfitsController(IUserService userService, ICryptoService cryptoService)
+        public ProfitsController(IUserService userService, ITransactionService transactionService, IWalletService walletService)
         {
             _userService = userService;
-            _cryptoService = cryptoService;
+            _transactionService = transactionService;
+            _walletService = walletService;
         }
         
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUserProfitabilityAsync(int userId)
         {
-            var user = await _userService.GetIncludesAsync(userId);
+            var user = await _userService.GetAsync(userId);
 
             if (user == null)
                 return NotFound("Nincs ilyen felhasználó!");
-            
-            var currentPrice = user.Wallets.Select(SumCryptoFromWalletAsync).Sum(result => result.Result);
-            var purchaseValue = user.Transactions.Where(t => t.IsSelling == false).Sum(t => t.TransactionPrice * t.TransactionQuantity);
-            var soldValue = user.Transactions.Where(t => t.IsSelling).Sum(t => t.TransactionPrice * t.TransactionQuantity);
+
+            var currentPrice = await _userService.GetAllWalletWorthAsync(userId);
+            var purchaseValue = await _transactionService.GetSumUserBuyingAsync(userId);
+            var soldValue = await _transactionService.GetSumUserSellingAsync(userId);
             
             return Ok(new ProfitsDto()
             {
@@ -40,35 +42,27 @@ namespace HaladoProg2.Controllers
         [HttpGet("details/{userId}")]
         public async Task<IActionResult> GetUserProfitabilityDetailedAsync(int userId)
         {
-            var user = await _userService.GetIncludesAsync(userId);
+            var user = await _userService.GetAsync(userId);
 
             if (user == null)
                 return NotFound("Nincs ilyen felhasználó!");
 
-            var result = user.Wallets.Where(w => w.CryptoCount > 0).ToList().ConvertAll(w =>
+            var currentPrice = await _userService.GetAllWalletWorthAsync(userId);
+            var wallets = await _walletService.GetUserWalletsNonEmptyAsync(userId);
+            List<ProfitsDetailedDto> listResult = [];
+            foreach (var item in wallets)
             {
-                var currentPrice = Task.FromResult(async () => await SumCryptoFromWalletAsync(w)).Result().Result;
-                var purchaseValue = user.Transactions.Where(t => t.IsSelling == false).Where(t => t.CryptoId == w.CryptoId)
-                    .Sum(t => t.TransactionPrice * t.TransactionQuantity);
-                var soldValue = user.Transactions.Where(t => t.IsSelling).Where(t => t.CryptoId == w.CryptoId)
-                    .Sum(t => t.TransactionPrice * t.TransactionQuantity);
+                var purchaseValue = await _transactionService.GetSumUserBuyingCryptoAsync(userId, item.CryptoId);
+                var soldValue = await _transactionService.GetSumUserSellingCryptoAsync(userId, item.CryptoId);
 
-                return new ProfitsDetailedDto()
+                listResult.Add(new ProfitsDetailedDto()
                 {
                     ProfitValue = Math.Abs(currentPrice - (purchaseValue - soldValue)),
                     IsProfiting = currentPrice > (purchaseValue - soldValue),
-                    CryptoId = w.CryptoId,
-                };
-            });
-            return Ok(result);
-        }
-        
-        private async Task<double> SumCryptoFromWalletAsync(Wallet w)
-        {
-            var crypto = await _cryptoService.GetAsync(w.CryptoId);
-            if(crypto == null)
-                return 0;
-            return crypto.CurrentPrice * w.CryptoCount;
+                    CryptoId = item.CryptoId,
+                });
+            }
+            return Ok(listResult);
         }
     }   
 }

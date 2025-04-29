@@ -30,11 +30,9 @@ namespace HaladoProg2.Controllers
 
 			var result = new WalletGetDto
 			{
-				TotalMoneyHuf = user.Wallets.Sum(w => w.CryptoCount * w.Crypto.CurrentPrice),
+				TotalMoneyHuf = await _userService.GetAllWalletWorthAsync(userId),
 				TotalCryptoTypesCount = user.Wallets.Count,
-				Wallets = user.Wallets.AsQueryable()
-					.Include(w => w.Crypto) // we need the object resolved here
-					.ToList().ConvertAll(c => new WalletGetCryptoDto
+				Wallets = (await _walletService.GetUserWallets(userId)).ConvertAll(c => new WalletGetCryptoDto
 				{
 					Id = c.Id,
 					CryptoId = c.CryptoId,
@@ -69,7 +67,11 @@ namespace HaladoProg2.Controllers
 			if (user == null)
 				return NotFound("A kért felhasználó nem létezik!");
 
-			var isOwnedWallet = user.Wallets.Any(w => w.Id == walletDeleteDto.WalletId);
+			var wallet = await _walletService.GetAsync(walletDeleteDto.WalletId);
+			if (wallet == null)
+				return NotFound("A kért tárca nem létezik!");
+			
+			var isOwnedWallet = wallet.UserId == userId;
 			if (!isOwnedWallet)
 				return BadRequest("A kért pénztárca nem a te tulajdonod!");
 

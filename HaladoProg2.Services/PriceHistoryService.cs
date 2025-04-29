@@ -37,7 +37,7 @@ namespace HaladoProg2.Services
 
 		public async Task<List<PriceHistory>> GetAllAsync()
 		{
-			return _dbContext.PriceHistories.AsEnumerable().ToList();
+			return await _dbContext.PriceHistories.AsQueryable().ToListAsync();
 		}
 
 		public async Task<PriceHistory?> GetAsync(int historyId)

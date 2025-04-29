@@ -36,18 +36,15 @@ namespace HaladoProg2.Controllers
         [HttpGet("price/history/{cryptoId}")]
         public async Task<IActionResult> GetPriceHistoryAsync(int cryptoId)
         {
-            var result = await _cryptoService.GetIncludesAsync(cryptoId);
-        
-            if (result == null)
-                return NotFound("Nem található ezzel az ID-vel crypto!");
+            var result = await _cryptoService.GetPriceHistoriesAsync(cryptoId);
 
-            var res = result.PriceHistories.ConvertAll(c => new PricingHistoryDto()
+            var res = result.ConvertAll(c => new PricingHistoryDto()
             {
                 PriceHistoryId = c.Id,
                 CryptoId = c.CryptoId,
                 Price = c.CurrentPrice,
                 Time = c.Time
-            }).OrderByDescending(p => p.Time);
+            }).OrderByDescending(p => p.Time).ToList();
         
             return Ok(res);
         }
